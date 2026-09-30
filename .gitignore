@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.venv/
+venv/
+
+# 测试临时文件
+tests/_tmp/
+tests/_generated_*
+tests/_e2e_*
+
+# Cadence 设计文件 (太大)
+*.brd
+*.mdd
+*.dra
+*.psm
+*.bsm
+*.ssm
+*.fsm
+*.pad
+*.gbr
+*.zip
+*.tgz
+*.7z
+*.log
+*.out
+*.dat
+*.raw
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# 临时下载
+tools/*.7z
+tools/*.zip
+ngspice-*
+
+# Cadence local config
+.env
+cadence_*.log
