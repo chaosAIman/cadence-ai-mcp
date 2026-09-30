@@ -1,0 +1,7 @@
+* RC Step Response
+V1  in  0  PULSE(0 5 0 1ns 1ns 1ms 2ms)
+R1  in  out  10k
+C1  out 0    1u
+.TRAN 1us 3ms
+.PROBE
+.END
