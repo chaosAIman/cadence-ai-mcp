@@ -1,0 +1,16 @@
+# CadenceAI MCP - Runtime dependencies
+# Pinned for stability on Windows + Python 3.12
+
+# MCP protocol SDK (official Anthropic)
+mcp>=1.0,<2.0
+
+# SPICE simulation (PySpice 1.5 works with Python 3.12; bundled sub-versions may vary)
+PySpice>=1.5,<2.0
+
+# Cross-platform process and filesystem utilities (used internally)
+# (stdlib only on most systems)
+
+# Optional: ngspice binary for actual SPICE simulation
+# PySpice does NOT ship a ngspice binary. You need either:
+#   1. ngspice.exe on PATH (download from https://ngspice.sourceforge.io)
+#   2. Or use local PSpice.exe with valid Cadence license (auto-detected)
