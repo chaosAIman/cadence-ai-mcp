@@ -137,8 +137,10 @@ stdio 协议，被任何 MCP 客户端（CodeBuddy / Claude Desktop / Cline）�
 | `generate_schematic_netlist` | 拓扑参数 | SPICE 网表字符串 | RC / RLC / MOSFET 等模板 |
 | `generate_allegro_tel` | 拓扑参数 | Allegro .tel 物理网表 | 文本格式 |
 | `generate_dsn_project` | 名称 | DSN 工程框架文件 | 用于 Capture |
-| `run_simulation` | 网表 + 类型 | {nodes, vectors, plot} | transient / ac / dc / op |
+| `run_simulation` | 网表 + 类型 | {nodes, vectors, plot} | transient / ac / dc / op; PSpice / ngspice / numpy fallback |
 | `save_netfile` | 网表 + 路径 | 文件路径 | 落盘 |
+
+> **真实工具名（已上线）**：`cadence_probe`, `cadence_env_vars`, `allegro_batch_commands`, `safe_batch_commands`, `find_brd_files`, `parse_brd_file`, `allegro_batch_run`, `generate_spice_netlist`, `parse_circuit_dsl`, `generate_schematic_dsn`, `netlist_to_allegro`, `run_circuit_simulation`, `list_simulation_templates`。共 **13 个** MCP 工具，**全部通过 stdio JSON-RPC 实测可用**。
 | `pcb_artwork` | 命令 + 选项 | stdout/stderr | 包装 allegro_batch |
 | `parse_sim_results` | 数据点 + kind | {metrics, summary} | 提取峰值 / 稳定值等 |
 
@@ -199,6 +201,13 @@ python gh_resync.py        # 对比远端 tree，补缺失文件
 create_repository(name="cadence-ai-mcp", private=false, auto_init=true)
 push_files(owner, repo, branch="main", files=[{path, content}], commit_message)
 ```
+
+### 7.4 实际推送结果（2026-09-30）
+
+- ✅ 仓库 `chaosAIman/cadence-ai-mcp` 已建立
+- ✅ 16 + 1 文件全部上传（17 包含 PROJECT.md）
+- ✅ 凭证：`fine-grained PAT`，Contents: Read and write
+- ⚠️ 之前遇到 fine-grained PAT 默认无 Administration 权限 → 无法 API 建仓（已通过浏览器建仓绕过）
 
 ---
 
