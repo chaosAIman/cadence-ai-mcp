@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns="http://www.cadence.com/orcad/capture/17.2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Design Hierarchy>
+    <Root Schematic="root" Path="ai_rc_lpf.DSN">
+      <Sheet PageNumber="1">
+        <Title>AI Generated RC LPF</Title>
+        <Author>CadenceAI</Author>
+        <Date>2026-09-30</Date>
+        <DocumentNumber>AI-GENERATED</DocumentNumber>
+        <Revision>1.0</Revision>
+      </Sheet>
+    </Root>
+  </Design Hierarchy>
+  <Components>
+    <Component Part="R1" Value="1k" X="0" Y="0" />
+    <Component Part="C1" Value="100n" X="100" Y="0" />
+    <Component Part="V1" Value="5" X="200" Y="0" />
+  </Components>
+  <Nets>
+    <Net Name="in" Refdes="N0">
+      <Pin Refdes="V1" />
+      <Pin Refdes="R1" />
+    </Net>
+    <Net Name="out" Refdes="N1">
+      <Pin Refdes="R1" />
+      <Pin Refdes="C1" />
+    </Net>
+    <Net Name="0" Refdes="N2">
+      <Pin Refdes="C1" />
+      <Pin Refdes="V1" />
+    </Net>
+  </Nets>
+</Project>
