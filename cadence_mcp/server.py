@@ -404,7 +404,11 @@ def handle_netlist_to_allegro(args: Dict[str, Any]) -> Dict[str, Any]:
 
 def handle_run_simulation(args: Dict[str, Any]) -> Dict[str, Any]:
     env = _get_env()
-    pspice = env.pspice_exe if args.get("prefer_pspice", True) else None
+    # License 不在时, 自动跳过 PSpice 走 fallback (避免 60s 超时)
+    prefer = args.get("prefer_pspice", True)
+    if prefer and not env.license_present:
+        prefer = False
+    pspice = env.pspice_exe if prefer else None
     work_dir = Path(args["work_dir"]) if args.get("work_dir") else None
     result = run_simulation(args["netlist"], prefer_pspice=pspice,
                             analysis=args.get("analysis", "TRAN"),
@@ -456,7 +460,6 @@ def build_mcp_server():
         from mcp.server import Server
         from mcp.server.stdio import stdio_server
         from mcp.types import Tool, TextContent
-        from mcp.shared.model_dump import json_dump  # noqa
 
         app = Server("cadence-ai")
 
