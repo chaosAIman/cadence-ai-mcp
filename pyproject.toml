@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cadence-ai-mcp"
+version = "0.1.0"
+description = "Model Context Protocol server for Cadence EDA tools"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "CadenceAI Bot", email = "ai@cadence-mcp.local" }]
+
+dependencies = [
+    "mcp>=1.0,<2.0",
+    "PySpice>=1.5,<2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "black", "flake8"]
+
+[project.scripts]
+cadence-mcp = "cadence_mcp.server:main"
+
+[tool.setuptools.packages.find]
+include = ["cadence_mcp*"]
+exclude = ["tests*", "examples*", "docs*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
