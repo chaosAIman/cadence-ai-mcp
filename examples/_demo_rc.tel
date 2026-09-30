@@ -1,0 +1,4 @@
+$ AI-Generated Physical Netlist for Allegro netin
+$ Created by CadenceAI MCP
+R1  in  out  1k
+C1  out  out  0
