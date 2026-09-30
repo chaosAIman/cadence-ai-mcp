@@ -20,7 +20,7 @@ circuit simulations** through a single, license-free, cross-platform interface.
 | **PCB files**     | Find `.brd` files, parse text assets from the Allegro binary DB                 |
 | **Batch CLI**     | Invoke 60+ safe `allegro_batch` subcommands (artwork, netin, dump_libraries…) |
 | **Schematics**    | Generate SPICE netlists, `.DSN` project XML, Allegro physical netlists         |
-| **Simulation**    | Generate circuits from templates, run via PSpice or ngspice, compute measurements |
+| **Simulation**    | Generate circuits from templates, run via PSpice / ngspice / analytical fallback |
 | **Netlist flow**  | DSL → SPICE → Allegro tel-format in one end-to-end pipeline                     |
 
 **13 MCP tools**, **75+ Allegro batch subcommands** wrapped with safety
@@ -161,6 +161,25 @@ TEST  9: MCP 工具注册表          [OK] 13 tools / 13 handlers
 TEST 10: 端到端电路设计流程      [OK] .cir / .tel / .dsn 全部产出
 ```
 
+### Live MCP demo
+
+For a real MCP-protocol walkthrough (spawns the server, calls every tool
+via JSON-RPC stdio, shows actual outputs and writes real files):
+
+```bash
+python demo_mcp_live.py
+```
+
+Expected outcome: **all 14 tasks** succeed; produces `_demo_rc.cir`,
+`_demo_div.cir`, `_demo_step.cir`, `_demo_rc.tel`, `_demo_amp.dsn` in
+`examples/`.
+
+For just the simulation numeric results without MCP overhead:
+
+```bash
+python demo_summary.py
+```
+
 ---
 
 ## 🧩 End-to-End Example
@@ -194,21 +213,42 @@ ai_design.dsn    OrCAD Capture   →  optional: hand-edit in Capture
 
 The server **auto-selects** the best available backend in this order:
 
-| Priority | Backend         | Requirements                              |
-|----------|-----------------|-------------------------------------------|
-| 1        | `pspice.exe -b` | PSpice on PATH (auto-detected via SPB root)|
-| 2        | `ngspice -b`    | `ngspice` on PATH (download separately)   |
-| 3        | Netlist only    | Netlist generated, ready for any SPICE    |
+| Priority | Backend              | Requirements                                          |
+|----------|----------------------|-------------------------------------------------------|
+| 1        | `pspice.exe -b`      | PSpice on PATH **+ valid license**                    |
+| 2        | `ngspice -b`         | `ngspice` on PATH (download separately)               |
+| 3        | `analytical-rc`      | Built-in numpy solver for RC / divider / step (no deps) |
+| 4        | `analytical-divider` | Closed-form R1+R2 voltage divider                     |
+
+**Auto-skip behavior**: if `cadence_probe` reports `license_present: false`,
+the server **skips PSpice** automatically (avoids the 60s timeout) and
+goes straight to the analytical fallback. So you get instant simulation
+results even without any license.
 
 Tested backends:
 
-- **PSpice** binary was probed via `Start-Process -Wait` (exit=0); command-line
-  `-b` mode requires an active license for actual analysis output, but the
-  netlist is delivered in compatible PSpice 16.x format.
+- **PSpice** binary present at `C:\Cadence\SPB_23.1\tools\bin\pspice.exe`;
+  `-b` mode requires an active license. When license is missing, server
+  falls back gracefully.
 - **ngspice** is the recommended open-source fallback. Download from
   <https://ngspice.sourceforge.io/download.html> and put `ngspice.exe` on
-  PATH.
+  PATH. (On some networks SourceForge blocks direct downloads; try MSYS2
+  `mingw-w64-ucrt-x86_64-ngspice` instead.)
 - **PySpice 1.5** Python wrapper is auto-detected (`pyspice_available: true`).
+- **Analytical fallback** (numpy only) — solves RC low/high-pass, step
+  response, and voltage dividers in closed form / closed-form-plus-numerical.
+  Always available, no external binaries required.
+
+### Demonstrated simulation results (no license required)
+
+Run `python demo_summary.py`:
+
+```
+RC 低通滤波器 (rc_lowpass)     Vout_peak=4.36V   tau=100μs   fc=1.59kHz
+RC 高通滤波器 (rc_highpass)    Vout_peak=4.36V   tau=100μs   fc=1.59kHz
+RC 阶跃响应  (rc_step)         Vout_end=0.48V    tau=10ms    fc=15.9Hz
+电压分频器   (voltage_divider) Vout=8.0V  (Vin=12V, R1=1k, R2=2k)
+```
 
 ---
 
